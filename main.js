@@ -21,6 +21,7 @@ if (!_el) {
   const _el = (selector) => document.querySelector(selector);
 }
 
+const events = getRandomDate();
 //Initialize the calender
 const calendarBody = _el("#calendar-body");
 const prevButton = _el("#prev");
@@ -333,4 +334,44 @@ function openModal() {
 }
 function closeModal() {
   _el("#event-modal-div").classList.add("hidden");
+}
+
+
+
+// var sample_events = [
+//   {name:"", from :"", to :""}
+// ]
+
+// Function to generate a random date between two dates
+function getRandomDate(start, end) {
+  return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+}
+
+// Create an array to store the events
+
+
+function getRondomEvents(){
+  const events = [];
+// Generate 10 random events
+for (let i = 0; i < 10; i++) {
+  // Generate random dates between February 1, 2023, and May 31, 2023
+  const startDate = getRandomDate(new Date('2023-02-01'), new Date('2023-05-31'));
+  const endDate = getRandomDate(startDate, new Date('2023-05-31'));
+
+  // Format the dates as strings in the desired format
+  const startTime = startDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+  const endTime = endDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+
+  // Create an event object with the desired properties
+  const event = {
+    name: `Event ${i + 1}`,
+    startTime: startTime,
+    endTime: endTime
+  };
+
+  // Add the event to the array
+  events.push(event);
+}
+
+return events;
 }
