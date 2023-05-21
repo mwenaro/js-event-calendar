@@ -13,7 +13,7 @@
       href="assets/img/favicon.png"
     />
     <title>Preclinic - Medical & Hospital - Bootstrap 5 Admin Template</title>
-    
+
     <link
       rel="stylesheet"
       type="text/css"
@@ -37,17 +37,24 @@
     />
 
     <link rel="stylesheet" href="assets/plugins/feather/feather.css" />
-    <link rel="stylesheet" type="text/css" href="theme.css">
+    <link rel="stylesheet" type="text/css" href="theme.css" />
     <link rel="stylesheet" type="text/css" href="assets/css/style.css" />
     <link rel="stylesheet" type="text/css" href="css/main.css" />
+    <link rel="stylesheet" type="text/css" href="styles.css" />
 
-  
+
+    <style>
+
+      .add-event-btn{
+        background: #1eb800 !important;
+      }
+    </style>
   </head>
   <body>
     <div class="main-wrapper">
       <!-- Header -->
-      <header class="header" ></header>
-      
+      <header class="header"></header>
+
       <!-- Side bar -->
       <aside class="sidebar" id="sidebar"></aside>
 
@@ -69,14 +76,16 @@
             <div class="col-sm-4 col-8 text-end m-b-30">
               <a
                 href="#"
-                class="btn btn-primary btn-rounded"
-                data-bs-toggle="modal"
+                id="add-event-btn"
+                class="btn btn-primary btn-rounded add-event-btn" 
+                data1-bs-toggle="modal"
                 data-bs-target="#add_event"
                 ><i class="fa fa-plus"></i> Add Event</a
               >
             </div>
           </div>
-          <div class="row">
+          <!-- Calendar section -->
+          <!-- <div class="row" id="calendar">
             <div class="col-lg-12">
               <div class="card-box mb-0">
                 <div class="row">
@@ -98,10 +107,7 @@
                     </div>
                     <div class="modal-body"></div>
                     <div class="modal-footer text-center">
-                      <button
-                        type="button"
-                        class="btn btn-primary submit-btn save-event"
-                      >
+                      <button type="button" class="btn btn-primary submit-btn save-event">
                         Create event
                       </button>
                       <button
@@ -114,6 +120,71 @@
                     </div>
                   </div>
                 </div>
+              </div>
+            </div>
+            
+          </div> -->
+          <!-- end of calendar section -->
+
+          <!-- <div id="calendar"></div> -->
+        
+            
+            <div class="calendar-container ">
+              <div class="calendar-header">
+                <div class="left-btns calendar-btn-group">
+                  <button id="prev"><</button>
+                  <button id="next">></button>
+                  <button id="today-btn" >Today</button>
+                </div>
+                <div id="month-year-div">May 2023</div>
+                <div class="right-btns calendar-btn-group">
+                  <button id="month-btn" class="bg_green">Month</button>
+                  <button id="week-btn" class="bg_light_black">Week</button>
+                  <!-- <button id="today">Day</button> -->
+                </div>
+              </div>
+        
+              <!-- calender weekly grid -->
+              <div id="calendar-body">
+                <!-- Cotented is dynamically put here -->
+              </div>
+        
+              <!-- Create Event Modal -->
+              <div id="event-modal-div" class="event-modal hidden">
+                
+                <!-- start -->
+                
+                <!-- end -->
+                <div class="close-btn-container">
+                  <!-- <button id="close-modal-btn">x</button> -->
+                  <button type="button" class="btn-close close-modal-btn" ></button>
+
+                </div>
+        
+                <form id="event-form">
+                  <h3>New event</h3>
+                  <div class="form-input-group">
+                    <label>Event name</label>
+                    <input id="event-name" placeholder="Event name" />
+                  </div>
+                  <div class="form-input-group">
+                    <label>Start Time</label>
+                    <input type="time" id="event-name" placeholder="7:10 AM - 10:50 AM" />
+                  </div>
+                  <div class="form-input-group">
+                    <label>End Time</label>
+                    <input type="time" id="event-name" placeholder="7:10 AM - 10:50 AM" />
+                  </div>
+                  <!-- <div class="form-input-group">
+                    <label>People</label>
+                    <div>
+                      <img src="person.png" />
+                      <button id="add-person-btn">+</button>
+                    </div>
+                  </div> -->
+        
+                  <button id="submit-event-btn">Add event</button>
+                </form>
               </div>
             </div>
           </div>
@@ -368,40 +439,7 @@
         </div>
       </div>
       <!-- Add_event modal -->
-      <div id="add_event" class="modal fade" role="dialog">
-        <div class="modal-dialog">
-          <div class="modal-content modal-md">
-            <div class="modal-header">
-              <h4 class="modal-title">Add Event</h4>
-              <button
-                type="button"
-                class="btn-close"
-                data-bs-dismiss="modal"
-              ></button>
-            </div>
-            <div class="modal-body">
-              <form>
-                <div class="form-group">
-                  <label>Event Name <span class="text-danger">*</span></label>
-                  <input class="form-control" type="text" />
-                </div>
-                <div class="form-group">
-                  <label>Event Date <span class="text-danger">*</span></label>
-                  <div class="cal-icon">
-                    <input class="form-control datetimepicker" type="text" />
-                  </div>
-                </div>
-                <div class="m-t-20 text-center">
-                  <button class="btn btn-primary submit-btn">
-                    Create Event
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-
+      <div id="add_event" class="modal fade" role="dialog"></div>
     </div>
     <div class="sidebar-overlay" data-reff=""></div>
     <script src="assets/js/jquery-3.6.1.min.js"></script>
@@ -413,11 +451,12 @@
     <script src="assets/js/fullcalendar.min.js"></script>
     <script src="assets/js/jquery.fullcalendar.js"></script>
     <script src="assets/js/bootstrap-datetimepicker.min.js"></script>
-    
+
     <script src="assets/js/app.js"></script>
     <!-- mine -->
     <script src="js/utils.js"></script>
     <script src="main.js"></script>
+    <script src="script.js"></script>
   </body>
 
   <!-- Mirrored from preclinic.dreamguystech.com/template/calendar.html by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 03 May 2023 07:24:36 GMT -->

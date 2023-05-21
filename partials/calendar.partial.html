@@ -1,0 +1,63 @@
+<div class="container">
+    <div class="top-bar">
+      <button id="add-event-btn">
+        <span>+</span> <span>Add Event</span>
+      </button>
+
+      <div class="profile-pic-container">
+        <img src="user.png" alt="profile picture" />
+      </div>
+    </div>
+    <div class="calendar-container">
+      <div class="calendar-header">
+        <div class="left-btns calendar-btn-group">
+          <button id="prev"><</button>
+          <button id="next">></button>
+          <button id="today">Today</button>
+        </div>
+        <div id="month-year-div">May 2023</div>
+        <div class="right-btns calendar-btn-group">
+          <button id="today">Month</button>
+          <button id="today">Week</button>
+          <button id="today">Day</button>
+        </div>
+      </div>
+
+      <!-- calender weekly grid -->
+      <div id="calendar-body">
+        <!-- Cotented is dynamically put here -->
+      </div>
+
+      <!-- Create Event Modal -->
+      <div id="event-modal-div" class="event-modal hidden">
+        <div class="close-btn-container">
+          <button id="close-modal-btn">x</button>
+        </div>
+
+        <form id="event-form">
+          <h3>New event</h3>
+          <div class="form-input-group">
+            <label>Event name</label>
+            <input id="event-name" placeholder="Event name" />
+          </div>
+          <div class="form-input-group">
+            <label>Start Time</label>
+            <input type="time" id="event-name" placeholder="7:10 AM - 10:50 AM" />
+          </div>
+          <div class="form-input-group">
+            <label>End Time</label>
+            <input type="time" id="event-name" placeholder="7:10 AM - 10:50 AM" />
+          </div>
+          <div class="form-input-group">
+            <label>People</label>
+            <div>
+              <img src="person.png" />
+              <button id="add-person-btn">+</button>
+            </div>
+          </div>
+
+          <button id="submit-event-btn">Add event</button>
+        </form>
+      </div>
+    </div>
+  </div>
