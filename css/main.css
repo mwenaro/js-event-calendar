@@ -14,3 +14,21 @@
     border: 3px solid var(--theme_white);
 
 }
+
+.grid-square{
+    border:1px solid black;
+    border-collapse: collapse;
+    padding: 2px;
+    height: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-weight: 800;
+}
+
+.grid-box{
+    border:1px solid black;
+    border-collapse: collapse;
+   margin-inline: auto;
+}
