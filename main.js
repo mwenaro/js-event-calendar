@@ -21,7 +21,7 @@ if (!_el) {
   const _el = (selector) => document.querySelector(selector);
 }
 
-const events = getRandomDate();
+const events = getRondomEvents();
 //Initialize the calender
 const calendarBody = _el("#calendar-body");
 const prevButton = _el("#prev");
@@ -344,7 +344,10 @@ function closeModal() {
 
 // Function to generate a random date between two dates
 function getRandomDate(start, end) {
-  return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+  // console.log(start)
+  return new Date(new Date().getFullYear(),5, Math.ceil(Math.random()*20));
+
+  // return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
 }
 
 // Create an array to store the events
@@ -354,6 +357,7 @@ function getRondomEvents(){
   const events = [];
 // Generate 10 random events
 for (let i = 0; i < 10; i++) {
+  
   // Generate random dates between February 1, 2023, and May 31, 2023
   const startDate = getRandomDate(new Date('2023-02-01'), new Date('2023-05-31'));
   const endDate = getRandomDate(startDate, new Date('2023-05-31'));
@@ -375,3 +379,30 @@ for (let i = 0; i < 10; i++) {
 
 return events;
 }
+
+
+// Get a reference to the form element
+const form = document.getElementById('event-form');
+
+// Add an event listener to the form's submit event
+form.addEventListener('submit', function(event) {
+  event.preventDefault(); // Prevent the default form submission
+
+  // Create a new FormData object passing the form as a parameter
+  const formData = new FormData(form);
+
+  // Access the form data using the input element's name attribute
+  const eventName = formData.get('event-name');
+  const startTime = formData.get('start-time');
+  const endTime = formData.get('end-time');
+
+  // Do something with the form data
+  console.log('Event Name:', eventName);
+  console.log('Start Time:', startTime);
+  console.log('End Time:', endTime);
+
+  // You can now process the form data, send it to the server, etc.
+});
+
+
+console.log({events})

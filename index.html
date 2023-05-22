@@ -42,7 +42,7 @@
     <link rel="stylesheet" type="text/css" href="css/main.css" />
     <link rel="stylesheet" type="text/css" href="styles.css" />
 
-
+    
     <style>
 
       .add-event-btn{
@@ -165,15 +165,15 @@
                   <h3>New event</h3>
                   <div class="form-input-group">
                     <label>Event name</label>
-                    <input id="event-name" placeholder="Event name" />
+                    <input id="event-name" placeholder="Event name" name="name"/>
                   </div>
                   <div class="form-input-group">
                     <label>Start Time</label>
-                    <input type="time" id="event-name" placeholder="7:10 AM - 10:50 AM" />
+                    <input type="time" id="start-time" name="startTime" />
                   </div>
                   <div class="form-input-group">
                     <label>End Time</label>
-                    <input type="time" id="event-name" placeholder="7:10 AM - 10:50 AM" />
+                    <input type="time" id="end-time" name="endTime" />
                   </div>
                 
         
@@ -446,11 +446,115 @@
     <script src="assets/js/jquery.fullcalendar.js"></script>
     <script src="assets/js/bootstrap-datetimepicker.min.js"></script>
 
+    <script  type="module">
+      // Import the functions you need from the SDKs you need
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+      // import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-analytics.js";
+     
+      // TODO: Add SDKs for Firebase products that you want to use
+      // https://firebase.google.com/docs/web/setup#available-libraries
+    
+      // Your web app's Firebase configuration
+      // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+      const firebaseConfig = {
+        apiKey: "AIzaSyDr8fCqLLbuTH2AyO8KW98Kf-OpPmkIC9Q",
+        authDomain: "event-calendar-4202a.firebaseapp.com",
+        projectId: "event-calendar-4202a",
+        storageBucket: "event-calendar-4202a.appspot.com",
+        messagingSenderId: "904090546059",
+        appId: "1:904090546059:web:f338cd7768c9c3f13e498e",
+        measurementId: "G-FSVBLNREV2"
+      };
+    
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      // const analytics = getAnalytics(app);
+      import { getDatabase, set, get, update,remove, ref, child } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+      const db = window.db = getDatabase()
+
+
+      window.db = db, window.set = set, window.get = get, window.remove = remove, window.ref =ref, window.child = child;
+    
+
+      function saveData(table, data) {
+  const id = new Date().getTime();
+  set(window.ref(db, `${table}/${id}`), data)
+    .then(() => alert(table + " Successfully created"))
+    .catch((error) => {
+      alert("Something went wrong, check data and try again");
+    });
+}
+function updateData(table, data) {
+  const id = new Date().getTime();
+  update(ref(db, `${table}/${id}`), data)
+    .then(() => alert(table + " Successfully created"))
+    .catch((error) => {
+      alert("Something went wrong, check data and try again");
+    });
+}
+
+function deleteData(table, id) {
+  remove(ref(db, `${table}/${id}`))
+    .then(() => alert(table + " Successfully deleted"))
+    .catch((error) => {
+      alert("Something went wrong, check data and try again");
+    });
+}
+
+function getDataById(table, id) {
+  const dbRef = ref(db);
+
+  get(ref(child(dbRef, `${table}/${id}`)))
+    .then((snapshot) => {
+      if (!snapshot.exists()) {
+        alert(" Data not found!");
+        return null;
+      }
+
+      return snapshot.value();
+    })
+    .catch((error) => {
+      alert("Something went wrong, check data and try again");
+      console.log({ error });
+      return null;
+    });
+}
+
+function getData(table) {
+  get(ref(db, `${table}`))
+    .then((snapshot) => {
+      // if (!snapshot.exists()) {
+      //   alert(" Data not found!");
+      //   return null;
+      // }
+console.log(snapshot.docs, "Nothing");
+      // return snapshot.value();
+    })
+    .catch((error) => {
+      alert("Something went wrong, check data and try again");
+      console.log({ error });
+      return null;
+    });
+}
+
+
+console.log(getData("event"));
+
+
+      
+    </script>
+
+
     <script src="assets/js/app.js"></script>
     <!-- mine -->
+    <script src="js/firebase.js"></script>
     <script src="js/utils.js"></script>
     <script src="main.js"></script>
     <script src="script.js"></script>
+    <script>
+
+
+    </script>
   </body>
 
   <!-- Mirrored from preclinic.dreamguystech.com/template/calendar.html by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 03 May 2023 07:24:36 GMT -->
