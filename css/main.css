@@ -41,15 +41,27 @@
   text-align: center;
   display: flex;
   flex-wrap: wrap;
-}
-.event-container li:nth-child(odd) {
-  background: #000;
   overflow: hidden;
 }
+.event-container li:nth-child(odd) {
+  background: rgba(255, 0, 0, 0.7);
+}
 .event-container li:nth-child(even) {
+  background: rgba(255, 255, 0, 0.8);
+}
+.event-container li:nth-child(1) {
+  background: var(--theme_green)
+}
+.event-container li:nth-child(2) {
   background: var(--theme_purple);
   color: var(--theme_blue);
 }
+.event-container li:nth-child(3) {
+  background: var(--theme_blue);
+}
+
+
+
 
 .grid-box {
   border: 1px solid black;

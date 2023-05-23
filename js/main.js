@@ -44,21 +44,40 @@ const def_events = [
     endTime: "19:26",
     drId: 1,
   },
-
   {
     eventName: "CEM",
     startTime: "08:30",
     date: "2023-05-22T21:00:00.000Z",
     endTime: "09:27",
-    drId: 1,
+    drId: 2,
   },
-
   {
     eventName: "surgery",
     startTime: "18:28",
     date: "2023-05-24T21:00:00.000Z",
     endTime: "20:33",
     drId: 3,
+  },
+  {
+    eventName: "meeting2",
+    startTime: "08:29",
+    date: "2023-05-02",
+    endTime: "10:29",
+    drId: 2,
+  },
+  {
+    eventName: "CEM",
+    startTime: "08:52",
+    date: "2023-05-02T21:00:00.000Z",
+    endTime: "09:52",
+    drId: 1,
+  },
+  {
+    eventName: "surgery",
+    startTime: "06:20",
+    date: "2023-05-01T21:00:00.000Z",
+    endTime: "07:59",
+    drId: 2,
   },
 ];
 
@@ -88,7 +107,7 @@ if (!_el) {
   const _el = (selector) => document.querySelector(selector);
 }
 
-const events = JSON.parse(localStorage.getItem("events")) || [];
+const events = getStoredData("events") ?? [];
 
 //Initialize the calender
 const calendarBody = _el("#calendar-body");
@@ -153,7 +172,6 @@ function renderCalendar() {
   prevButton.addEventListener("click", showPreviousWeek);
   nextButton.addEventListener("click", showNextWeek);
 
-
   const addPersonButton = _el("#add-person-btn");
 
   // Creating the calender
@@ -195,13 +213,14 @@ function renderCalendar() {
   calendarBody.appendChild(headerDiv);
 
   let startTime = 7;
-  let endTime = 21;
+  let endTime = 22;
 
   //creating and adding the other fields
   const eventsRows = document.createElement("div");
   eventsRows.classList.add("events-grid");
 
   while (startTime <= endTime) {
+    const startOfWeek2 = getStartOfWeek(currentDate);
     const row = document.createElement("div");
     row.classList.add("row");
     row.classList.add("col-md-12");
@@ -214,15 +233,45 @@ function renderCalendar() {
 
     row.appendChild(firstCol);
 
+    // startOfWeek2.setDate(startOfWeek2.getDate() + 1);
     for (let day = 0; day < 5; day++) {
+      // startOfWeek2.setDate(startOfWeek2.getDate() + 1);
+      let _date = startOfWeek2.getDate();
+      let _time = startTime;
       const colDiv = document.createElement("div");
       // colDiv.addEventListener("click", selectDate);
       // eventsRows.appendChild(colDiv);
       colDiv.classList.add("col-md-2");
       colDiv.classList.add("grid-square");
+      let identifier = `${currentDate.getFullYear()}-${currentDate.getMonth()}-${_date}`;
+      let events = hasEventNow(identifier, _time);
+      if (events) {
+        let p = document.createElement("ul");
+        // p.classList.add('ul')
+        p.classList.add("event-container");
+
+        let content = events.map(
+          (e) =>
+            `<li><span>${e.startTime || ""}-${
+              e.endTime || ""
+            }</sp>  ${" "}<span>${e.eventName || ""}</span></li>`
+        );
+        p.innerHTML = content;
+
+        colDiv.appendChild(p);
+      }
+
+      // colDiv.addEventListener("click", (e) => {
+      //   let identifier = `${currentDate.getFullYear()}-${currentDate.getMonth()}-${_date}`;
+      //   let events = hasEventNow(identifier, _time);
+      // });
+
+      startOfWeek2.setDate(startOfWeek2.getDate() + 1);
       row.appendChild(colDiv);
+
       // startOfWeek.setDate(startOfWeek.getDate() + 1);
     }
+    startOfWeek2.setDate(startOfWeek2.getDate() + 1);
     calendarBody.appendChild(row);
 
     startTime += 1;
@@ -536,19 +585,20 @@ form.addEventListener("submit", function (e) {
     startTime,
     date,
     endTime,
-    drId: localStorage.getItem("loggedInDr"),
+    drId: +getStoredData("loggedInDr"),
   };
-  let events = JSON.parse(localStorage.getItem("events")) || [];
-  // let events =  [];
-  // console.log({event})
-  localStorage.setItem("events", JSON.stringify([...events, event]));
+
+  addToStoredData("events", event);
+
   form.reset();
-  console.log(JSON.parse(localStorage.getItem("events")));
+
   renderMonthlyCalendar();
   // You can now process the form data, send it to the server, etc.
 });
 
 function setDateForSelectedActivity(date) {
   eventDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), date);
-
 }
+
+// console.log(events);
+// removeStoredData('events')
