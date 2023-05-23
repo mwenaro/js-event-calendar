@@ -1,34 +1,58 @@
-.toggle-menu{
-    width:40px;
-    /* height: 30px; */
-    display: flex;
-    flex-direction: column;
-    gap:6px;
-  
-    margin: 5px;
-    margin-top:20px;
+.toggle-menu {
+  width: 40px;
+  /* height: 30px; */
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  margin: 5px;
+  margin-top: 20px;
 }
 
-
-.toggle-menu div{
-    border: 3px solid var(--theme_white);
-
+.toggle-menu div {
+  border: 3px solid var(--theme_white);
 }
 
-.grid-square{
-    border:1px solid black;
-    border-collapse: collapse;
-    padding: 2px;
-    height: 100px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    font-weight: 800;
+.grid-square {
+  border: 1px solid black;
+  border-collapse: collapse;
+  padding: 0.1rem;
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+  /* justify-content: center; */
+  gap: 1rem;
+  text-align: center;
+
+  /* font-weight: 800;*/
 }
 
-.grid-box{
-    border:1px solid black;
-    border-collapse: collapse;
-   margin-inline: auto;
+.event-container {
+  text-align: center;
+  width: 100%;
+}
+
+.event-container li {
+  width: 100%;
+  border-radius: 0.2rem;
+  padding: 0.1rem;
+  color: var(--theme_white);
+  font-size: 0.9em;
+  text-align: center;
+  display: flex;
+  flex-wrap: wrap;
+}
+.event-container li:nth-child(odd) {
+  background: #000;
+  overflow: hidden;
+}
+.event-container li:nth-child(even) {
+  background: var(--theme_purple);
+  color: var(--theme_blue);
+}
+
+.grid-box {
+  border: 1px solid black;
+  border-collapse: collapse;
+  margin-inline: auto;
 }
