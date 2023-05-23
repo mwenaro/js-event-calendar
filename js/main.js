@@ -39,9 +39,9 @@ const doctors = [
 const def_events = [
   {
     eventName: "meeting",
-    startTime: "16:26",
+    startTime: "9:40",
     date: "2023-05-02T21:00:00.000Z",
-    endTime: "19:26",
+    endTime: "11:20",
     drId: 1,
   },
   {
@@ -53,9 +53,9 @@ const def_events = [
   },
   {
     eventName: "surgery",
-    startTime: "18:28",
+    startTime: "08:28",
     date: "2023-05-24T21:00:00.000Z",
-    endTime: "20:33",
+    endTime: "09:33",
     drId: 3,
   },
   {
