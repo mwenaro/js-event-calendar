@@ -1,82 +1,128 @@
-// { getDatabase, set, get, update,remove, ref, child }
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+// import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-analytics.js";
 
-// let set = window.set, get = window.get, ref= window.ref, remove = window.remove,update = window.remove, db = window.db
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
 
-let _time = new Date();
-// const doctors = [
-//   {
-//     name: "John Smith",
-//     speciality: "surgeon",
-//     id: 1,
-//     gen: "male",
-//   },
-//   {
-//     name: "Jane Smith",
-//     speciality: "surgeon",
-//     id: 2,
-//     gen: "female",
-//   },
-//   {
-//     name: "Rose M",
-//     speciality: "sphysician",
-//     id: 3,
-//     gen: "female",
-//   },
-// ];
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig2 = {
+  apiKey: "AIzaSyDr8fCqLLbuTH2AyO8KW98Kf-OpPmkIC9Q",
+  authDomain: "event-calendar-4202a.firebaseapp.com",
+  projectId: "event-calendar-4202a",
+  storageBucket: "event-calendar-4202a.appspot.com",
+  messagingSenderId: "904090546059",
+  appId: "1:904090546059:web:f338cd7768c9c3f13e498e",
+  measurementId: "G-FSVBLNREV2",
+};
 
-const defaultEvents = [
-  {
-    name: "Inspection",
-    startTime: _time,
-    endTime: _time.setTime(_time.getTime().toString() + 3600 * 2 * 1000),
-    drId: 1,
-  },
-  {
-    name: "Surgery",
-    startTime: _time,
-    endTime: _time + 3600 * 1 * 1000,
-    drId: 2,
-  },
-  {
-    name: "Meeting ",
-    startTime: _time + 3600 * 2 * 1000,
-    endTime: _time + 3600 * 4 * 1000,
-    drId: 3,
-  },
-  {
-    name: "Departmental meeting",
-    startTime: _time + 3600 * 3 * 1000,
-    endTime: _time + 3600 * 6 * 1000,
-    drId: 2,
-  },
-  {
-    name: "Inspection",
-    startTime: _time - 3600 * 4 * 1000,
-    endTime: _time - 3600 * 2 * 1000,
-    drId: 1,
-  },
-];
+const firebaseConfig = {
+  apiKey: "AIzaSyAH8Z-L32kIfTzFaMGZoBE3lz4ycb5iQOs",
+  authDomain: "my-first-app-7fede.firebaseapp.com",
+  projectId: "my-first-app-7fede",
+  storageBucket: "my-first-app-7fede.appspot.com",
+  messagingSenderId: "848991765026",
+  appId: "1:848991765026:web:23160bdb9aaffc9784807b",
+  // databaseURL:"https://my-first-app-7fede.firebaseio.com"
+};
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+// const analytics = getAnalytics(app);
+import {
+  getDatabase,
+  set,
+  get,
+  update,
+  remove,
+  ref,
+  child,
+  onValue,
+} from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
 
-// console.log({defaultEvents, doctors})
-// defaultEvents.map(event=>console.log({start:Date(event.startTime), end:Date(event.endTime)}))
+const db = getDatabase(app);
 
-document.addEventListener("load", () => {
-  let drPic = _el("#dr-pic");
-  let drName = _el("#dr-name");
+function saveData(table, data) {
+  const id = new Date().getTime();
+  set(ref(db, `${table}/${id}`), data)
+    .then((snapshot) => {
+      console.log({ snapshot });
+      alert(table + " Successfully created");
+    })
+    .catch((error) => {
+      console.log({ error });
+      alert("Something went wrong, check data and try again");
+    });
+}
 
-  console.log({ drName, drPic });
-});
+// saveData("events", {
+// eventName: "Surgery",
+// date: new Date(),
+// startTime: "14:30",
+// endTime: "17:30",
+// drId:1
+// })
+
+function updateData(table, data, id) {
+  update(ref(db, `${table}/${id}`), data)
+    .then(() => alert(table + " Successfully created"))
+    .catch((error) => {
+      alert("Something went wrong, check data and try again");
+    });
+}
+
+function deleteData(table, id) {
+  remove(ref(db, `${table}/${id}`))
+    .then(() => alert(table + " Successfully deleted"))
+    .catch((error) => {
+      alert("Something went wrong, check data and try again");
+    });
+}
+
+function getDataById2(table, id) {
+  const dbRef = ref(db);
+
+  get(ref(child(dbRef, `${table}/${id}`)))
+    .then((snapshot) => {
+      if (!snapshot.exists()) {
+        alert(" Data not found!");
+        return null;
+      }
+
+      return snapshot.value();
+    })
+    .catch((error) => {
+      alert("Something went wrong, check data and try again");
+      console.log({ error });
+      return null;
+    });
+}
+
+async function getDataById(table, id) {
+  const path = `${table}/${id}`;
+  return await getData(path);
+}
+
+async function getData(table) {
+  let data = null;
+  try {
+    const starCountRef = await ref(db, table);
+    onValue(starCountRef, (snapshot) => {
+        data = snapshot.val();
+        console.log({ data });
+        return data;
+      });
+    // const snapshot = await onValue(starCountRef);
+    // const d = await snapshot.val();
+    // data = d;
+    // console.log({ d });
+  } catch (error) {
+    console.log({ error });
+  } finally {
+    return data;
+  }
+}
+
+console.log(await getDataById("events", "1684901639833"));
 
 
-// function hasEvents(dateObj = null, date=null) {
-//   // const day = document.querySelector("div[data-id=2023-4-22]")
-//   const days = document.querySelectorAll('.grid-square')
-//   const day = _el('div[data-id="2023-4-22"]')
-  
-//   console.log({day,days})
-//   day.classList.add('bg-green');
-//   renderMonthlyCalendar()
-//   }
-  
-
-// hasEvents()

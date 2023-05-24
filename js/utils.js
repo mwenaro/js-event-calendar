@@ -23,6 +23,16 @@ const loadPartial = (path, targetElm) => {
   }
 };
 
+const getHrs = (_time) => +_time.toString().split(":")[0];
+const getMins = (_time) => +_time.toString().split(":")[1];
+
+const compareTime = (_t1, _t2) => {
+  if (+getHrs(_t1) > +getHrs(_t2)) return true;
+  // else if (getHrs(_t1) == getHrs(_t2) && getMins(_t1) > getMins(_t2))
+    // return true;
+  else false;
+};
+
 function hasEvents(identifier = null) {
   try {
     let events = JSON.parse(localStorage.getItem("events"));
@@ -34,7 +44,10 @@ function hasEvents(identifier = null) {
           e.drId == localStorage.getItem("loggedInDr")
         );
       })
-      .sort((a, b) => a.startTime.valueOf() - b.startTime.valueOf());
+      // .sort((a, b) => compareTime(b.startTime, a.startTime));
+      .sort((a, b) => getHrs(a.startTime) - getHrs(b.startTime));
+      // .sort((a, b) => getHrs(b.startTime) - getHrs(a.startTime));
+      // .sort((a, b) => compareTime(b.startTime, a.startTime));
 
     // console.log({events, data})
     return data;
@@ -46,7 +59,6 @@ function hasEvents(identifier = null) {
   // return data ?? false;
 }
 function hasEventNow(identifier, hr) {
-  let getHr = (time) => +time.toString().split(":")[0];
   try {
     let events = JSON.parse(localStorage.getItem("events"));
     let data = events.filter((e) => {
@@ -54,7 +66,7 @@ function hasEventNow(identifier, hr) {
       return (
         identifier === `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}` &&
         e.drId == localStorage.getItem("loggedInDr") &&
-        [getHr(e.startTime), getHr(e.endTime)].includes(hr)
+        [getHrs(e.startTime), getHrs(e.endTime)].includes(hr)
       );
     });
 
