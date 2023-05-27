@@ -1,4 +1,8 @@
 // const _el = (selector) => document.querySelector(selector);
+
+// import { saveData } from "./firebase.js";
+
+// import {}
 let calendarType = "monthly";
 // load header
 const header = _el("header");
@@ -12,133 +16,9 @@ loadPartial("sidebar", sidebar);
 const addEventModal = _el("#add_event");
 loadPartial("add_event_modal", addEventModal);
 
-// add event modal
-// const calendarSection = _el("#calendar");
-// loadPartial("calendar", calendarSection);
-const doctors = [
-  {
-    name: "John Smith",
-    speciality: "surgeon",
-    id: 2,
-    gen: "male",
-  },
-  {
-    name: "Jane Smith",
-    speciality: "surgeon",
-    id: 1,
-    gen: "female",
-  },
-  {
-    name: "Rose M",
-    speciality: "sphysician",
-    id: 3,
-    gen: "female",
-  },
-];
-
-const def_events = [
-  {
-    eventName: "meeting",
-    startTime: "9:40",
-    date: "2023-05-02T21:00:00.000Z",
-    endTime: "11:20",
-    drId: 1,
-  },
-  {
-    eventName: "CEM",
-    startTime: "08:30",
-    date: "2023-05-22T21:00:00.000Z",
-    endTime: "09:27",
-    drId: 2,
-  },
-  {
-    eventName: "surgery",
-    startTime: "08:28",
-    date: "2023-05-24T21:00:00.000Z",
-    endTime: "09:33",
-    drId: 3,
-  },
-  {
-    eventName: "meeting2",
-    startTime: "08:29",
-    date: "2023-05-02",
-    endTime: "10:29",
-    drId: 2,
-  },
-  {
-    eventName: "CEM",
-    startTime: "08:52",
-    date: "2023-05-02T21:00:00.000Z",
-    endTime: "09:52",
-    drId: 1,
-  },
-  {
-    eventName: "surgery",
-    startTime: "06:20",
-    date: "2023-05-01T21:00:00.000Z",
-    endTime: "07:59",
-    drId: 2,
-  },
-];
-
-if (!localStorage.getItem("events")) {
-  localStorage.setItem("events", JSON.stringify(def_events));
-}
-
-function getRandoDrId() {
-  let i = 0;
-  let id = 1;
-  while (1) {
-    let randomNum = Math.random() * 10;
-    randomNum = Math.floor(randomNum);
-    if (doctors.map((dr) => dr.id).includes(randomNum)) {
-      id = randomNum;
-      break;
-    }
-  }
-
-  return id;
-}
-
-localStorage.setItem("loggedInDr", getRandoDrId());
-
-//creatre a query selector function
 if (!_el) {
   const _el = (selector) => document.querySelector(selector);
 }
-
-const events = getStoredData("events") ?? [];
-
-//Initialize the calender
-const calendarBody = _el("#calendar-body");
-const prevButton = _el("#prev");
-const nextButton = _el("#next");
-const todayButton = _el("#today-btn");
-const weekButton = _el("#week-btn");
-const monthButton = _el("#month-btn");
-
-const addEventButton = _el("#add-event-btn");
-const monthYearDiv = _el("#month-year-div");
-
-const monthYearElement = _el("#month-year");
-
-// const calendarBody = _el("#calendar-body");
-
-//Global Variables
-const weekDays = [
-  "Sunday",
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-  "Saturday",
-];
-
-// Date initialization
-let currentDate = new Date();
-let eventDate = new Date();
-let selectedDate = currentDate;
 
 function renderCalendar() {
   calendarBody.innerHTML = "";
@@ -155,15 +35,15 @@ function renderCalendar() {
     -1
   ).getDate();
 
-  let numOfWeeks = Math.ceil((lastDayOfMonth - firstDayOfMonth) / 7);
-  let CurrentWeekNumber = Math.ceil(
-    (currentDate.getDate() - firstDayOfMonth) / 7
-  );
+  // let numOfWeeks = Math.ceil((lastDayOfMonth - firstDayOfMonth) / 7);
+  // let CurrentWeekNumber = Math.ceil(
+  //   (currentDate.getDate() - firstDayOfMonth) / 7
+  // );
 
   const currentMonth = currentDate.toLocaleString("default", { month: "long" });
-  const currentDay = currentDate.toLocaleString("default", {
-    dateStyle: "long",
-  });
+  // const currentDay = currentDate.toLocaleString("default", {
+  //   dateStyle: "long",
+  // });
   //select elements
 
   // monthYearDiv.textContent = `Week ${CurrentWeekNumber}, ${currentMonth} ${currentDate.getFullYear()}`;
@@ -245,6 +125,7 @@ function renderCalendar() {
       colDiv.classList.add("grid-square");
       let identifier = `${currentDate.getFullYear()}-${currentDate.getMonth()}-${_date}`;
       let events = hasEventNow(identifier, _time);
+
       if (events) {
         let p = document.createElement("ul");
         // p.classList.add('ul')
@@ -405,7 +286,7 @@ function renderMonthlyCalendar() {
         break;
       } else {
         const cell = document.createElement("div");
-        cell.textContent = _date;
+        // cell.textContent = _date;
         cell.classList.add("grid-square");
 
         let identifier = `${currentDate.getFullYear()}-${currentDate.getMonth()}-${_date}`;
@@ -422,7 +303,7 @@ function renderMonthlyCalendar() {
 
           let content = events.map(
             (e) =>
-              `<li><span>${e.startTime || ""}-${
+              `<li ev-id ="${e.id}"><span>${e.startTime || ""}-${
                 e.endTime || ""
               }</sp>  ${" "}<span>${e.eventName || ""}</span></li>`
           );
@@ -431,14 +312,25 @@ function renderMonthlyCalendar() {
           cell.appendChild(p);
         }
 
+        let b = _date;
         if ([0, 6].includes(j)) {
           cell.classList.add("col-md-1");
         } else {
           // cell.classList.add("col-md-2");
           cell.classList.add("col-md-2");
+
+          let labelAndButton = document.createElement("div");
+          labelAndButton.innerHTML = `
+        <span>${_date}</span>
+       <div class="add-box">
+        <span><input class="hidden" value="${_date}" />+</span>
+        </div>
+        `;
+          labelAndButton.addEventListener("mouseenter", (e) =>
+            addEventAction()
+          );
+          cell.prepend(labelAndButton);
         }
-        let b = _date;
-        cell.addEventListener("click", (e) => selectDate(e.target, b));
 
         if (
           _date === currentDate.getDate() &&
@@ -464,7 +356,7 @@ renderMonthlyCalendar();
 function selectDate(...vars) {
   if (calendarType === "monthly") _el("#date-field").classList.add("hidden");
 
-  // console.log([vars[0].outerText, vars[1]]);
+  console.log([vars[0].outerText, vars[1]]);
   setDateForSelectedActivity(vars[1]);
 
   closeModal();
@@ -493,6 +385,10 @@ weekButton.addEventListener("click", () => {
   renderCalendar();
 });
 
+function addEvent() {
+  openModal();
+}
+
 const addEvenModal = _el("#add-event-btn");
 addEvenModal.addEventListener("click", () => {
   if (calendarType === "monthly") _el("#date-field").classList.remove("hidden");
@@ -500,66 +396,39 @@ addEvenModal.addEventListener("click", () => {
   openModal();
 });
 
-//close
-_el(".close-modal-btn").addEventListener("click", closeModal);
-//open modsl fnc
-function openModal() {
-  _el("#event-modal-div").classList.remove("hidden");
-}
-function closeModal() {
-  // _el('#date-field').classList.remove('hidden')
-  _el("#event-modal-div").classList.add("hidden");
+function setDateForSelectedActivity(date) {
+  eventDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), date);
 }
 
-// var sample_events = [
-//   {name:"", from :"", to :""}
-// ]
+// console.log(events);
+// removeStoredData('events')
+function addEventAction() {
+  let topDivs = document.querySelectorAll(".grid-square div:nth-child(1)");
+  topDivs.forEach((topDiv) => {
+    let span = topDiv.querySelector("div.add-box>span");
+    topDiv.addEventListener("mouseenter", (e) => {
+      span.addEventListener("click", (e) => {
+        if (calendarType === "monthly")
+          _el("#date-field").classList.add("hidden");
+        _el("#date-field").classList.add("hidden");
+        // addEvent();
 
-// Function to generate a random date between two dates
-function getRandomDate(start, end) {
-  // console.log(start)
-  return new Date(new Date().getFullYear(), 5, Math.ceil(Math.random() * 20));
-
-  // return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
-}
-
-// Create an array to store the events
-
-function getRondomEvents() {
-  const events = [];
-  // Generate 10 random events
-  for (let i = 0; i < 10; i++) {
-    // Generate random dates between February 1, 2023, and May 31, 2023
-    const startDate = getRandomDate(
-      new Date("2023-02-01"),
-      new Date("2023-05-31")
-    );
-    const endDate = getRandomDate(startDate, new Date("2023-05-31"));
-
-    // Format the dates as strings in the desired format
-    const startTime = startDate.toLocaleTimeString("en-US", {
-      hour: "numeric",
-      minute: "numeric",
-      hour12: true,
-    });
-    const endTime = endDate.toLocaleTimeString("en-US", {
-      hour: "numeric",
-      minute: "numeric",
-      hour12: true,
+        let input = e.target.querySelector("input");
+        // console.log({ el: input.value });
+        setDateForSelectedActivity(+input.value);
+        closeModal();
+        _el("#date-field").classList.add("hidden");
+        openModal();
+      });
+      span.style = "display:flex";
     });
 
-    // Create an event object with the desired properties
-    const event = {
-      name: `Event ${i + 1}`,
-      startTime: startTime,
-      endTime: endTime,
-    };
-
-    // Add the event to the array
-    events.push(event);
-  }
-
-  return events;
+    topDiv.addEventListener("mouseleave", (e) => {
+      // console.log(e.target, " left");
+      // e.target
+      span.style = "";
+    });
+  });
 }
 
 // Get a reference to the form element
@@ -580,25 +449,45 @@ form.addEventListener("submit", function (e) {
   const date = formData.get("date") || eventDate;
   const endTime = formData.get("end-time");
 
+  //check if the time is valid . startTime < endTime
+  if(getTimeValue(startTime) >= getTimeValue(endTime)){
+    alert("Invalid time. Your statTime cannot be after your endTime. Change and proceed")
+    form.reset()
+    return;
+  }
+  
+  //create a new eventobject
   let event = {
+    id: new Date().getTime() + Math.floor(Math.random() * 10000),
     eventName,
     startTime,
     date,
     endTime,
-    drId: +getStoredData("loggedInDr"),
+    drId: +getStoredData("loggedInDr"), //This is the logged in doctor id
   };
 
-  addToStoredData("events", event);
+  // check if there's no event within the time range
+  if (!validateEventByTimeRange(event)) {
+    alert(
+      "Invalid time range. You have an event within the range. Change time and try again!"
+    );
+    form.reset()
+    return;
+  }
 
+
+
+
+  addToStoredData("events", event); //pushig the new event to the local storage
+  // saveData("events", event);//Save the event to firebase;
+
+  //Reset form fields
   form.reset();
 
+  //Rerender the calender
   renderMonthlyCalendar();
+  // addEventAction();
   // You can now process the form data, send it to the server, etc.
 });
 
-function setDateForSelectedActivity(date) {
-  eventDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), date);
-}
-
-// console.log(events);
-// removeStoredData('events')
+// addEventAction();

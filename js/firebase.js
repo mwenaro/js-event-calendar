@@ -1,4 +1,4 @@
-// Import the functions you need from the SDKs you need
+// Import the export functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
 // import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-analytics.js";
 
@@ -42,7 +42,7 @@ import {
 
 const db = getDatabase(app);
 
-function saveData(table, data) {
+export function saveData(table, data) {
   const id = new Date().getTime();
   set(ref(db, `${table}/${id}`), data)
     .then((snapshot) => {
@@ -55,6 +55,8 @@ function saveData(table, data) {
     });
 }
 
+export { getDatabase, set, get, update, remove, ref, child, onValue };
+
 // saveData("events", {
 // eventName: "Surgery",
 // date: new Date(),
@@ -63,7 +65,7 @@ function saveData(table, data) {
 // drId:1
 // })
 
-function updateData(table, data, id) {
+export function updateData(table, data, id) {
   update(ref(db, `${table}/${id}`), data)
     .then(() => alert(table + " Successfully created"))
     .catch((error) => {
@@ -71,7 +73,7 @@ function updateData(table, data, id) {
     });
 }
 
-function deleteData(table, id) {
+export function deleteData(table, id) {
   remove(ref(db, `${table}/${id}`))
     .then(() => alert(table + " Successfully deleted"))
     .catch((error) => {
@@ -79,7 +81,7 @@ function deleteData(table, id) {
     });
 }
 
-function getDataById2(table, id) {
+export function getDataById2(table, id) {
   const dbRef = ref(db);
 
   get(ref(child(dbRef, `${table}/${id}`)))
@@ -98,24 +100,20 @@ function getDataById2(table, id) {
     });
 }
 
-async function getDataById(table, id) {
+export async function getDataById(table, id) {
   const path = `${table}/${id}`;
   return await getData(path);
 }
 
-async function getData(table) {
+export async function getData(table) {
   let data = null;
   try {
     const starCountRef = await ref(db, table);
     onValue(starCountRef, (snapshot) => {
-        data = snapshot.val();
-        console.log({ data });
-        return data;
-      });
-    // const snapshot = await onValue(starCountRef);
-    // const d = await snapshot.val();
-    // data = d;
-    // console.log({ d });
+      data = snapshot.val();
+      console.log({ data });
+      return data;
+    });
   } catch (error) {
     console.log({ error });
   } finally {
@@ -123,6 +121,43 @@ async function getData(table) {
   }
 }
 
-console.log(await getDataById("events", "1684901639833"));
+// console.log(await getDataById("events", "1684901639833"));
 
+// Get a reference to the form element
+const form = _el("#event-form");
 
+// // Add an event listener to the form's submit event
+// form.addEventListener("submit", function (e) {
+
+//   alert("loaded from firebase");
+//   e.preventDefault(); // Prevent the default form submission
+//   closeModal();
+
+//   // alert("hello")
+//   // Create a new FormData object passing the form as a parameter
+//   const formData = new FormData(form);
+
+//   // Access the form data using the input element's name attribute
+//   const eventName = formData.get("event-name");
+//   const startTime = formData.get("start-time");
+//   const date = formData.get("date") || eventDate;
+//   const endTime = formData.get("end-time");
+
+//   let event = {
+//     eventName,
+//     startTime,
+//     date,
+//     endTime,
+//     drId: +getStoredData("loggedInDr"),
+//   };
+
+//   addToStoredData("events", event);
+//   saveData("events", event);
+
+//   form.reset();
+
+//   renderMonthlyCalendar();
+//   // You can now process the form data, send it to the server, etc.
+// });
+
+// export {getData, saveData, getDataById, updateData, deleteData}

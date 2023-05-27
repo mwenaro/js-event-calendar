@@ -1,5 +1,3 @@
-const _el = (selector) => document.querySelector(selector);
-
 const loadPartial = (path, targetElm) => {
   try {
     fetch("partials/" + path + ".partial.html")
@@ -29,7 +27,7 @@ const getMins = (_time) => +_time.toString().split(":")[1];
 const compareTime = (_t1, _t2) => {
   if (+getHrs(_t1) > +getHrs(_t2)) return true;
   // else if (getHrs(_t1) == getHrs(_t2) && getMins(_t1) > getMins(_t2))
-    // return true;
+  // return true;
   else false;
 };
 
@@ -40,14 +38,15 @@ function hasEvents(identifier = null) {
       .filter((e) => {
         let d = new Date(e.date);
         return (
-          identifier === `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}` &&
+          // identifier === `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}` &&
+          identifier === createYearMonthDateIdentifier(e.date) &&
           e.drId == localStorage.getItem("loggedInDr")
         );
       })
       // .sort((a, b) => compareTime(b.startTime, a.startTime));
       .sort((a, b) => getHrs(a.startTime) - getHrs(b.startTime));
-      // .sort((a, b) => getHrs(b.startTime) - getHrs(a.startTime));
-      // .sort((a, b) => compareTime(b.startTime, a.startTime));
+    // .sort((a, b) => getHrs(b.startTime) - getHrs(a.startTime));
+    // .sort((a, b) => compareTime(b.startTime, a.startTime));
 
     // console.log({events, data})
     return data;
@@ -64,7 +63,8 @@ function hasEventNow(identifier, hr) {
     let data = events.filter((e) => {
       let d = new Date(e.date);
       return (
-        identifier === `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}` &&
+        // identifier === `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}` &&
+        identifier === createYearMonthDateIdentifier(e.date) &&
         e.drId == localStorage.getItem("loggedInDr") &&
         [getHrs(e.startTime), getHrs(e.endTime)].includes(hr)
       );
@@ -147,4 +147,45 @@ function removeFromStoredData(slice, filter) {
     console.log({ error });
     return null;
   }
+}
+
+//close
+_el(".close-modal-btn").addEventListener("click", closeModal);
+//open modsl fnc
+function openModal() {
+  _el("#event-modal-div").classList.remove("hidden");
+}
+function closeModal() {
+  _el("#date-field").classList.remove("hidden");
+  _el("#event-modal-div").classList.add("hidden");
+}
+
+function validateEventByTimeRange(event) {
+
+let events = getStoredData('events');
+let filtered = events.filter(e=>{
+  return createYearMonthDateIdentifier(e.date) == createYearMonthDateIdentifier(event.date) && e.drId == event.drId && (
+    (
+      getTimeValue(event.startTime) >= getTimeValue(e.startTime) && getTimeValue(event.startTime) <= getTimeValue(e.endTime) ||
+      (getTimeValue(event.endTime) >= getTimeValue(e.startTime) && getTimeValue(event.endTime) <= getTimeValue(e.endTime) )
+    )
+  )
+})
+
+// console.log({filtered})
+if(filtered.length>0) return false;
+
+  return true;
+}
+
+function createYearMonthDateIdentifier(_date) {
+  let date = new Date(_date);
+  return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+}
+
+
+function getTimeValue(t) {
+
+  console.log({time:t, value: 60*Number(getHrs(t))+Number(getMins(t))})
+  return 60*Number(getHrs(t))+Number(getMins(t))
 }

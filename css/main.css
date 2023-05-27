@@ -27,6 +27,32 @@
   /* font-weight: 800;*/
 }
 
+/* The label and the add Button */
+/* .grid-square :nth-child(1) { */
+
+   .grid-square div:nth-child(1) {
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+  gap: 50%;
+  font-size: 1.5em;
+}
+
+.grid-square div:nth-child(1) :nth-child(2) >span {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: var(--theme_green);
+  font-size: 1em;
+  color: var(--theme_white);
+  border-radius: 50%;
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+
+
 .event-container {
   text-align: center;
   width: 100%;
@@ -47,21 +73,18 @@
   background: rgba(255, 0, 0, 0.7);
 }
 .event-container li:nth-child(even) {
-  background: rgba(255, 255, 0, 0.8);
+  background: #ffbc34;
 }
 .event-container li:nth-child(1) {
-  background: var(--theme_green)
+  background: var(--theme_event_green);
 }
 .event-container li:nth-child(2) {
   background: var(--theme_purple);
   color: var(--theme_blue);
 }
 .event-container li:nth-child(3) {
-  background: var(--theme_blue);
+  background: #009efb;
 }
-
-
-
 
 .grid-box {
   border: 1px solid black;
