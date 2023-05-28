@@ -129,6 +129,26 @@ function addToStoredData(slice, data) {
   }
 }
 
+function upateToStoredData(slice, id, newData) {
+  try {
+    let storedData = getStoredData(slice) ? getStoredData(slice) : [];
+
+    let updated = storedData.map((event) => {
+      if (id == event.id) return newData;
+      return event;
+    });
+    
+
+    let stringified = JSON.stringify(updated);
+    localStorage.setItem(slice, stringified);
+
+    return JSON.parse(localStorage.getItem(slice));
+  } catch (error) {
+    console.log({ error });
+    return null;
+  }
+}
+
 function removeFromStoredData(slice, filter) {
   try {
     let storedData = getStoredData(slice) ? getStoredData(slice) : [];
@@ -161,19 +181,43 @@ function closeModal() {
 }
 
 function validateEventByTimeRange(event) {
+  let events = getStoredData("events");
+  let filtered = events.filter((e) => {
+    return (
+      createYearMonthDateIdentifier(e.date) ==
+        createYearMonthDateIdentifier(event.date) &&
+      e.drId == event.drId &&
+      ((getTimeValue(event.startTime) >= getTimeValue(e.startTime) &&
+        getTimeValue(event.startTime) <= getTimeValue(e.endTime)) ||
+        (getTimeValue(event.endTime) >= getTimeValue(e.startTime) &&
+          getTimeValue(event.endTime) <= getTimeValue(e.endTime)))
+    );
+  });
 
-let events = getStoredData('events');
-let filtered = events.filter(e=>{
-  return createYearMonthDateIdentifier(e.date) == createYearMonthDateIdentifier(event.date) && e.drId == event.drId && (
-    (
-      getTimeValue(event.startTime) >= getTimeValue(e.startTime) && getTimeValue(event.startTime) <= getTimeValue(e.endTime) ||
-      (getTimeValue(event.endTime) >= getTimeValue(e.startTime) && getTimeValue(event.endTime) <= getTimeValue(e.endTime) )
-    )
-  )
-})
+  // console.log({filtered})
+  if (filtered.length > 0) return false;
 
-// console.log({filtered})
-if(filtered.length>0) return false;
+  return true;
+}
+
+function validateEventByTimeRangeAndId(event, id=null) {
+  
+  let events = getStoredData("events");
+  // let exists = event.filter(ev =>ev.id == id)
+  let filtered = events.filter(ev =>+ev.id !== +id).filter((e) => {
+    return (
+      createYearMonthDateIdentifier(e.date) ==
+        createYearMonthDateIdentifier(event.date) &&
+      e.drId == event.drId &&
+      ((getTimeValue(event.startTime) >= getTimeValue(e.startTime) &&
+        getTimeValue(event.startTime) <= getTimeValue(e.endTime)) ||
+        (getTimeValue(event.endTime) >= getTimeValue(e.startTime) &&
+          getTimeValue(event.endTime) <= getTimeValue(e.endTime)))
+    );
+  });
+
+  // console.log({filtered})
+  if (filtered.length > 0) return false;
 
   return true;
 }
@@ -183,9 +227,7 @@ function createYearMonthDateIdentifier(_date) {
   return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
 }
 
-
 function getTimeValue(t) {
-
-  console.log({time:t, value: 60*Number(getHrs(t))+Number(getMins(t))})
-  return 60*Number(getHrs(t))+Number(getMins(t))
+  console.log({ time: t, value: 60 * Number(getHrs(t)) + Number(getMins(t)) });
+  return 60 * Number(getHrs(t)) + Number(getMins(t));
 }

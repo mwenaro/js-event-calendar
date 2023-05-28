@@ -446,7 +446,7 @@ function handleEditEvent(e) {
     );
     let editForm = document.createElement("div");
     editForm.classList.add("edit-form");
-    editForm.classList.add('event-modal');
+    editForm.classList.add("event-modal");
     editForm.innerHTML = `
                 <div class="close-btn-container">
                   <!-- <button id="close-modal-btn">x</button> -->
@@ -454,11 +454,13 @@ function handleEditEvent(e) {
 
                 </div>
         
-                <form id="event-form">
+                <form id="edit-event-form">
+                <input class="hidden" id="event-id" name="event-id"/>
+                <input class="hidden" id="event-dr-id" name="event-dr-id"/>
                   <h3>Update Event Form</h3>
                   <div class="form-input-group">
                     <label>Event name</label>
-                    <input name="event-name" id ="event-name" placeholder="Event name"/>
+                    <input name="event-name" id ="event-name" required placeholder="Event name"/>
                   </div>
                   <div class="form-input-group " id="date-field">
                     <label>Date</label>
@@ -466,64 +468,46 @@ function handleEditEvent(e) {
                   </div>
                   <div class="form-input-group">
                     <label>Start Time</label>
-                    <input type="time" name="start-time" id="start-time" />
+                    <input type="time" name="start-time" id="start-time" required />
                   </div>
                   <div class="form-input-group">
                     <label>End Time</label>
-                    <input type="time" name="end-time"  id="end-time" />
+                    <input type="time" name="end-time"  id="end-time" required />
                   </div>
                 
         
-                  <button id="submit-event-btn">Add event</button>
+                  <button type="submit">Update</button>
 </form>
 `;
-// close form
+    // close form
 
-let eventNameField = editForm.querySelector("#event-name")
-let eventDateField = editForm.querySelector("#event-date")
-let eventStartTimeField = editForm.querySelector("#start-time")
-let eventEndTimeField = editForm.querySelector("#end-time")
+    let eventNameField = editForm.querySelector("#event-name");
+    let eventDateField = editForm.querySelector("#event-date");
+    let eventStartTimeField = editForm.querySelector("#start-time");
+    let eventEndTimeField = editForm.querySelector("#end-time");
+    let eventIdField = editForm.querySelector("#event-id");
+    let eventDrIdField = editForm.querySelector("#event-dr-id");
 
-eventNameField.value = eventData.eventName,
-eventDateField.value = new Date(eventData.date),
-eventStartTimeField.value = eventData.startTime,
-eventEndTimeField.value = eventData.endTime
+    (eventNameField.value = eventData.eventName),
+      (eventDateField.value = new Date(eventData.date)),
+      (eventStartTimeField.value = eventData.startTime),
+      (eventEndTimeField.value = eventData.endTime),
+      (eventIdField.value = eventData.id),
+      (eventDrIdField.value = eventData.drId);
 
-console.log({eventNameField, eventDateField, eventStartTimeField, eventEndTimeField})
-
-_el('body').appendChild(editForm)
-// editForm.querySelector('.btn-close').addEventListener('click', _el('body').removeChild(editForm))
-
+    console.log({
+      eventNameField,
+      eventDateField,
+      eventStartTimeField,
+      eventEndTimeField,
+    });
+    const _form = editForm.querySelector("form");
+    _form.addEventListener("submit", (e) => handleEventUpdate(e, eventData));
+    _el("body").appendChild(editForm);
+    editForm.querySelector('.btn-close').addEventListener('click',()=> _el('body').removeChild(editForm))
   } else {
     console.log({ input, listItem });
   }
-}
-
-function deleteEventAction2(e) {
-  // deleteBtns.forEach((deleteBtn) => {
-  // let deleteBtn = e.target.querySelector('span.delete-btn');
-  // let eventElement = deleteBtn.parentElement;
-  let deleteBtn = e.target.querySelector("div.delete-btn");
-
-  e.target.addEventListener("mouseenter", () => {
-    // deleteBtn.addEventListener("mouseenter", () => {
-    let input = e.target.querySelector("input");
-
-    deleteBtn.classList.remove("hidden");
-    deleteBtn.addEventListener("click", () => {
-      let ans = confirm("Are you sure you want to delete this event?");
-      if (ans) {
-        return console.log({ ans, id: +input.value });
-      }
-      return false;
-    });
-
-    deleteBtn.addEventListener("mouseleave", () => {
-      deleteBtn.classList.add("hidden");
-    });
-  });
-
-  // });
 }
 
 // removeStoredData('events')
@@ -558,10 +542,9 @@ function addEventAction() {
 
 // Get a reference to the form element
 const add_event_form = _el("#event-form");
-const edit_event_form = _el("#edit-event-form");
 
 // Add an event listener to the form's submit event
-form.addEventListener("submit", function (e) {
+add_event_form.addEventListener("submit", function (e) {
   e.preventDefault(); // Prevent the default form submission
   closeModal();
 
@@ -580,7 +563,7 @@ form.addEventListener("submit", function (e) {
     alert(
       "Invalid time. Your statTime cannot be after your endTime. Change and proceed"
     );
-    form.reset();
+    add_event_form.reset();
     return;
   }
 
@@ -599,7 +582,7 @@ form.addEventListener("submit", function (e) {
     alert(
       "Invalid time range. You have an event within the range. Change time and try again!"
     );
-    form.reset();
+    add_event_form.reset();
     return;
   }
 
@@ -607,7 +590,7 @@ form.addEventListener("submit", function (e) {
   // saveData("events", event);//Save the event to firebase;
 
   //Reset form fields
-  form.reset();
+  add_event_form.reset();
 
   //Rerender the calender
   renderMonthlyCalendar();
@@ -615,4 +598,68 @@ form.addEventListener("submit", function (e) {
   // You can now process the form data, send it to the server, etc.
 });
 
-// addEventAction();
+function handleEventUpdate(e, oldEvent) {
+  e.preventDefault(); // Prevent the default form submission
+  closeModal();
+  let edit_event_form = e.target;
+  // alert("hello")
+  // Create a new FormData object passing the form as a parameter
+  const formData = new FormData(edit_event_form);
+
+  // Access the form data using the input element's name attribute
+  const eventDrId = formData.get("event-dr-id");
+  const eventId = formData.get("event-id");
+  const eventName = formData.get("event-name");
+  const startTime = formData.get("start-time");
+  const date = formData.get("date") || oldEvent.date;
+  const endTime = formData.get("end-time");
+
+  //check if the time is valid . startTime < endTime
+  if (getTimeValue(startTime) >= getTimeValue(endTime)) {
+    alert(
+      "Invalid time. Your statTime cannot be after your endTime. Change and proceed"
+    );
+    // edit_event_form.reset();
+    // return;
+  }
+
+  //create a new eventobject
+  let event = {
+    id: +eventId,
+    eventName,
+    startTime,
+    date,
+    endTime,
+    drId: +eventDrId,
+  };
+
+  // check if there's no event within the time range
+  if (!validateEventByTimeRangeAndId(event, eventId)) {
+    alert(
+      "Invalid time range. You have an event within the range. Change time and try again!"
+    );
+    edit_event_form.reset();
+    return;
+  }
+  console.log({ event });
+  upateToStoredData("events", eventId, event);
+
+  // addToStoredData("events", event); //pushig the new event to the local storage
+  // saveData("events", event);//Save the event to firebase;
+
+  //Reset form fields
+  edit_event_form.reset();
+  alert("Event Successfully updated!")
+closeEditForm()
+  //Rerender the calender
+  renderMonthlyCalendar();
+  // document.querySelector("body").removeChild(_el(".edit-form"));
+  // addEventAction();
+  // You can now process the form data, send it to the server, etc.
+}
+
+function closeEditForm() {
+  if (document.querySelector("body").querySelector(".edit-form")) {
+    document.querySelector("body").removeChild(_el(".edit-form"));
+  }
+}
