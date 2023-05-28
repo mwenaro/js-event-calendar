@@ -298,16 +298,28 @@ function renderMonthlyCalendar() {
 
         if (events) {
           let p = document.createElement("ul");
-          // p.classList.add('ul')
           p.classList.add("event-container");
+          events.forEach((e) => {
+            let listItem = document.createElement("li");
+            listItem.setAttribute("ev-id", e.id);
+            listItem.setAttribute("style", "position:relative");
+            listItem.innerHTML = `<span>${e.startTime || ""}-${
+              e.endTime || ""
+            } ${" "} ${e.eventName || ""}</span>
+            <div class="delete-btn hidden" >
+            <input class="hidden" value="${e.id}" /><span>-</span>
+            </div>
+            `;
 
-          let content = events.map(
-            (e) =>
-              `<li ev-id ="${e.id}"><span>${e.startTime || ""}-${
-                e.endTime || ""
-              }</sp>  ${" "}<span>${e.eventName || ""}</span></li>`
-          );
-          p.innerHTML = content;
+            listItem.addEventListener("mouseenter", (e) => {
+              deleteEventAction(e);
+            });
+            listItem.addEventListener("dblclick", (e) => {
+              // console.log(confirm("Do you want to edit the event"));
+              handleEditEvent(e);
+            });
+            p.appendChild(listItem);
+          });
 
           cell.appendChild(p);
         }
@@ -315,6 +327,7 @@ function renderMonthlyCalendar() {
         let b = _date;
         if ([0, 6].includes(j)) {
           cell.classList.add("col-md-1");
+          cell.innerHTML = `<div style="justify-content:center">${_date}</div>`;
         } else {
           // cell.classList.add("col-md-2");
           cell.classList.add("col-md-2");
@@ -400,7 +413,119 @@ function setDateForSelectedActivity(date) {
   eventDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), date);
 }
 
-// console.log(events);
+//delete event action
+function deleteEventAction(e) {
+  let eItem = e.target;
+  let deleteBtn = eItem.querySelector("div.delete-btn");
+
+  let id = +eItem.querySelector("input").value;
+
+  deleteBtn.classList.remove("hidden");
+  deleteBtn.addEventListener("click", () => {
+    deleteBtn.classList.add("hidden");
+    let ans = confirm("Are you sure you want to delete this event?");
+    if (ans) {
+      removeFromStoredData("events", { name: "id", value: id });
+      renderMonthlyCalendar();
+      return;
+    }
+    return false;
+  });
+
+  eItem.addEventListener("mouseleave", () => {
+    deleteBtn.classList.add("hidden");
+  });
+}
+
+function handleEditEvent(e) {
+  let listItem = e.target.parentElement;
+  let input = listItem.querySelector("input");
+  if (input) {
+    let eventData = (getStoredData("events") || []).find(
+      (e) => e.id == +input.value
+    );
+    let editForm = document.createElement("div");
+    editForm.classList.add("edit-form");
+    editForm.classList.add('event-modal');
+    editForm.innerHTML = `
+                <div class="close-btn-container">
+                  <!-- <button id="close-modal-btn">x</button> -->
+                  <button type="button" class="btn-close close-modal-btn" ></button>
+
+                </div>
+        
+                <form id="event-form">
+                  <h3>Update Event Form</h3>
+                  <div class="form-input-group">
+                    <label>Event name</label>
+                    <input name="event-name" id ="event-name" placeholder="Event name"/>
+                  </div>
+                  <div class="form-input-group " id="date-field">
+                    <label>Date</label>
+                    <input type="date" name="date"  id="event-date" />
+                  </div>
+                  <div class="form-input-group">
+                    <label>Start Time</label>
+                    <input type="time" name="start-time" id="start-time" />
+                  </div>
+                  <div class="form-input-group">
+                    <label>End Time</label>
+                    <input type="time" name="end-time"  id="end-time" />
+                  </div>
+                
+        
+                  <button id="submit-event-btn">Add event</button>
+</form>
+`;
+// close form
+
+let eventNameField = editForm.querySelector("#event-name")
+let eventDateField = editForm.querySelector("#event-date")
+let eventStartTimeField = editForm.querySelector("#start-time")
+let eventEndTimeField = editForm.querySelector("#end-time")
+
+eventNameField.value = eventData.eventName,
+eventDateField.value = new Date(eventData.date),
+eventStartTimeField.value = eventData.startTime,
+eventEndTimeField.value = eventData.endTime
+
+console.log({eventNameField, eventDateField, eventStartTimeField, eventEndTimeField})
+
+_el('body').appendChild(editForm)
+// editForm.querySelector('.btn-close').addEventListener('click', _el('body').removeChild(editForm))
+
+  } else {
+    console.log({ input, listItem });
+  }
+}
+
+function deleteEventAction2(e) {
+  // deleteBtns.forEach((deleteBtn) => {
+  // let deleteBtn = e.target.querySelector('span.delete-btn');
+  // let eventElement = deleteBtn.parentElement;
+  let deleteBtn = e.target.querySelector("div.delete-btn");
+
+  e.target.addEventListener("mouseenter", () => {
+    // deleteBtn.addEventListener("mouseenter", () => {
+    let input = e.target.querySelector("input");
+
+    deleteBtn.classList.remove("hidden");
+    deleteBtn.addEventListener("click", () => {
+      let ans = confirm("Are you sure you want to delete this event?");
+      if (ans) {
+        return console.log({ ans, id: +input.value });
+      }
+      return false;
+    });
+
+    deleteBtn.addEventListener("mouseleave", () => {
+      deleteBtn.classList.add("hidden");
+    });
+  });
+
+  // });
+}
+
 // removeStoredData('events')
 function addEventAction() {
   let topDivs = document.querySelectorAll(".grid-square div:nth-child(1)");
@@ -410,7 +535,7 @@ function addEventAction() {
       span.addEventListener("click", (e) => {
         if (calendarType === "monthly")
           _el("#date-field").classList.add("hidden");
-        _el("#date-field").classList.add("hidden");
+        // _el("#date-field").classList.add("hidden");
         // addEvent();
 
         let input = e.target.querySelector("input");
@@ -426,13 +551,14 @@ function addEventAction() {
     topDiv.addEventListener("mouseleave", (e) => {
       // console.log(e.target, " left");
       // e.target
-      span.style = "";
+      if (span) span.style = "";
     });
   });
 }
 
 // Get a reference to the form element
-const form = _el("#event-form");
+const add_event_form = _el("#event-form");
+const edit_event_form = _el("#edit-event-form");
 
 // Add an event listener to the form's submit event
 form.addEventListener("submit", function (e) {
@@ -441,7 +567,7 @@ form.addEventListener("submit", function (e) {
 
   // alert("hello")
   // Create a new FormData object passing the form as a parameter
-  const formData = new FormData(form);
+  const formData = new FormData(add_event_form);
 
   // Access the form data using the input element's name attribute
   const eventName = formData.get("event-name");
@@ -450,12 +576,14 @@ form.addEventListener("submit", function (e) {
   const endTime = formData.get("end-time");
 
   //check if the time is valid . startTime < endTime
-  if(getTimeValue(startTime) >= getTimeValue(endTime)){
-    alert("Invalid time. Your statTime cannot be after your endTime. Change and proceed")
-    form.reset()
+  if (getTimeValue(startTime) >= getTimeValue(endTime)) {
+    alert(
+      "Invalid time. Your statTime cannot be after your endTime. Change and proceed"
+    );
+    form.reset();
     return;
   }
-  
+
   //create a new eventobject
   let event = {
     id: new Date().getTime() + Math.floor(Math.random() * 10000),
@@ -471,12 +599,9 @@ form.addEventListener("submit", function (e) {
     alert(
       "Invalid time range. You have an event within the range. Change time and try again!"
     );
-    form.reset()
+    form.reset();
     return;
   }
-
-
-
 
   addToStoredData("events", event); //pushig the new event to the local storage
   // saveData("events", event);//Save the event to firebase;

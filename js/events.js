@@ -4,3 +4,10 @@ eventListItems.forEach((item,) => {
     console.log({clicks:e.detail, target:e.target.textContent});
   });
 });
+
+
+function validateEventTimeFields() {
+
+  const startTime = '';
+  
+}
